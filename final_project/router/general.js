@@ -10,7 +10,7 @@ public_users.get('/', async (req, res) => {
     const response = await axios.get(`${BASE_URL}/`);
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving books" });
+    res.status(500).json({ message: "Error retrieving all books" });
   }
 });
 
@@ -18,9 +18,12 @@ public_users.get('/', async (req, res) => {
 public_users.get('/isbn/:isbn', async (req, res) => {
   try {
     const response = await axios.get(`${BASE_URL}/isbn/${req.params.isbn}`);
+    if (!response.data || Object.keys(response.data).length === 0) {
+      return res.status(404).json({ message: "Book not found" });
+    }
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(404).json({ message: "Book not found" });
+    res.status(500).json({ message: "Error retrieving book by ISBN" });
   }
 });
 
@@ -28,9 +31,12 @@ public_users.get('/isbn/:isbn', async (req, res) => {
 public_users.get('/author/:author', async (req, res) => {
   try {
     const response = await axios.get(`${BASE_URL}/author/${req.params.author}`);
+    if (!response.data || response.data.length === 0) {
+      return res.status(404).json({ message: "No books found for this author" });
+    }
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(404).json({ message: "Author not found" });
+    res.status(500).json({ message: "Error retrieving books by author" });
   }
 });
 
@@ -38,9 +44,12 @@ public_users.get('/author/:author', async (req, res) => {
 public_users.get('/title/:title', async (req, res) => {
   try {
     const response = await axios.get(`${BASE_URL}/title/${req.params.title}`);
+    if (!response.data || response.data.length === 0) {
+      return res.status(404).json({ message: "No books found with this title" });
+    }
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(404).json({ message: "Title not found" });
+    res.status(500).json({ message: "Error retrieving books by title" });
   }
 });
 
